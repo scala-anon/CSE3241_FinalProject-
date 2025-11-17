@@ -1,0 +1,41 @@
+SELECT Member.fname, Member.lname, COUNT(Rentals.user_no) AS Occurrences
+FROM Member
+LEFT JOIN Rentals ON Member.user_id = Rentals.user_no
+GROUP BY Member.user_id, Member.fname, Member.lname;
+
+
+SELECT Member.fname, Member.lname, Member.email
+FROM Member
+LEFT JOIN Rentals ON Member.user_id = Rentals.user_no
+GROUP BY Member.user_id, Member.fname, Member.lname, Member.email
+HAVING COUNT(Rentals.user_no) > (SELECT AVG(rental_count)
+                                  FROM (SELECT COUNT(*) AS rental_count
+                                        FROM Rentals
+                                        GROUP BY user_no));
+
+
+SELECT Equipment.Description, COUNT(Rentals.user_no) AS Copies_Rented
+FROM Equipment
+JOIN Rentals ON Checks_Out.rental_id = Rentals.rental_id
+JOIN Checks_Out ON Checks_Out.equipment_id = Equipment.equipment_id
+GROUP BY Equipment.Description
+ORDER BY Copies_Rented DESC;
+
+
+SELECT Drone.name,SUM(Deliveries.distance_traveled) AS total_miles
+FROM Drone
+LEFT JOIN Deliveries ON Drone.drone_id = Deliveries.drone_id
+GROUP BY 
+Drone.drone_id, Drone.name
+ORDER BY 
+COUNT(Deliveries.delivery_id) DESC, total_miles DESC;
+
+
+SELECT Equipment.manufacturer, COUNT(Checks_Out.rental_id) AS rental_count
+FROM Equipment
+INNER JOIN Checks_Out ON Equipment.equipment_id = Checks_Out.equipment_id
+GROUP BY Equipment.manufacturer
+ORDER BY rental_count DESC
+LIMIT 1;
+
+
